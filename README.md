@@ -97,6 +97,7 @@ The hosted MCP server lives at `https://api.transcript1.com/mcp`. This package (
 
 - API keys are shown once at creation and stored only as hashes server-side. Revoke them anytime under **Account → API keys**.
 - The bridge refuses plain-`http` server URLs except for `localhost` and `127.0.0.1`, so your key is not sent in the clear.
+- The bridge hands your key to `mcp-remote` through its environment (`TRANSCRIPT1_AUTH_HEADER`), never on its command line, so other local users cannot read it from the process list.
 - Read tools are marked read-only. `delete_transcription` is destructive, so clients should ask for confirmation before calling it.
 
 ## License

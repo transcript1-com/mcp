@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
 const { readFileSync } = require('node:fs');
 const path = require('node:path');
-const { DEFAULT_SERVER_URL, buildArgs, resolveConfig } = require('../lib/bridge.js');
+const { DEFAULT_SERVER_URL, buildArgs, buildEnv, resolveConfig } = require('../lib/bridge.js');
 
 const root = path.join(__dirname, '..');
 
@@ -34,9 +34,24 @@ test('rejects plain-http remote URLs', () => {
   assert.equal(error, 'transcript1-mcp: TRANSCRIPT1_MCP_URL must use https.');
 });
 
-test('passes the bearer header and extra arguments to mcp-remote', () => {
+test('passes the bearer header as an environment reference and extra arguments to mcp-remote', () => {
   const args = buildArgs({ mcpRemoteBin: '/x/proxy.js', url: DEFAULT_SERVER_URL, token: 't1_abc', extraArgs: ['--debug'] });
-  assert.deepEqual(args, ['/x/proxy.js', 'https://api.transcript1.com/mcp', '--header', 'Authorization: Bearer t1_abc', '--debug']);
+  assert.deepEqual(args, ['/x/proxy.js', 'https://api.transcript1.com/mcp', '--header', 'Authorization:${TRANSCRIPT1_AUTH_HEADER}', '--debug']);
+  for (const arg of args) {
+    assert.doesNotMatch(arg, /t1_abc/);
+  }
+});
+
+test('puts the bearer header only in the child environment', () => {
+  const env = buildEnv({ PATH: '/bin', TRANSCRIPT1_API_KEY: 't1_abc' }, 't1_abc');
+  assert.equal(env.TRANSCRIPT1_AUTH_HEADER, 'Bearer t1_abc');
+  assert.equal(env.PATH, '/bin');
+});
+
+test('the bin spawns mcp-remote without the key on its command line', () => {
+  const source = readFileSync(path.join(root, 'bin/transcript1-mcp.js'), 'utf8');
+  assert.match(source, /env: buildEnv\(process\.env, config\.token\)/);
+  assert.doesNotMatch(source, /token: config\.token/);
 });
 
 test('the bin exits 1 with help when the key is missing', () => {
