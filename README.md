@@ -1,59 +1,63 @@
-# note1 MCP Server
+# transcript1 MCP Server
 
-**Query your meeting notes, transcripts, and action items from Claude, ChatGPT, Cursor, or any MCP client.**
+**Transcribe YouTube videos and audio or video files from Claude, ChatGPT, Cursor, or any MCP client.**
 
-[note1](https://note1.ai) is an AI meeting notetaker that joins your calls, records them, and turns every meeting into a searchable summary with action items. This MCP (Model Context Protocol) server connects AI tools directly to that meeting data — search across conversations with cited sources, read who spoke how much and what was asked, export summaries and speaker-attributed transcripts, list, create and complete action items, manage topic trackers, read and update your meeting notes, check which calendar events are being recorded, and schedule or manage recordings, all from a conversation.
+[transcript1](https://transcript1.com) is an API- and MCP-first transcription service. This MCP (Model Context Protocol) server lets AI tools transcribe a YouTube video from its URL, upload an audio or video file, wait for the result, and read the transcript back with speaker labels and timestamps, all from a conversation. Long transcripts are paged so they fit in the model's context.
 
-Every tool acts with the authenticated user's own permissions: private meetings stay private, and results match exactly what the user sees in the note1 dashboard.
+Every tool acts with the authenticated user's own account: jobs, uploads, and minutes are yours alone.
 
-- **Server URL:** `https://api.note1.ai/mcp` (Streamable HTTP)
-- **Registry:** [`ai.note1/mcp`](https://registry.modelcontextprotocol.io/v0/servers?search=note1) in the official MCP Registry
-- **Docs:** [note1.ai/docs/mcp-server](https://note1.ai/docs/mcp-server)
-- **Auth:** OAuth 2.1 (automatic browser consent) or Personal Access Tokens
+- **Server URL:** `https://api.transcript1.com/mcp` (Streamable HTTP)
+- **Docs:** [transcript1.com/docs/mcp](https://transcript1.com/docs/mcp)
+- **Auth:** OAuth 2.1 (automatic browser consent) or API keys (`Authorization: Bearer t1_...`)
 
 ## Tools
 
 | Tool | Description |
 | --- | --- |
-| `note1_search_meetings` | Search meetings by keyword and meaning. Mode `search` returns ranked snippets; mode `analysis` returns an AI answer with cited, timestamped sources. |
-| `note1_list_meetings` | Browse meetings by status and date range, paginated. |
-| `note1_get_meeting` | One meeting's summary, sections, participants, status, recurring series (previous and next occurrence), and link. |
-| `note1_get_meeting_insights` | Speakers with talk-time share, questions asked and answered, topics with time ranges, topic-tracker mentions, or highlights. Use instead of the transcript for "who spoke most" or "what was asked". |
-| `note1_export_meeting` | Full summary and/or speaker-attributed transcript as paste-ready markdown or structured JSON. |
-| `note1_list_action_items` | Tracked action items for a meeting or the team, with status, owner, meeting, date and page; `mine` for your own. |
-| `note1_create_action_item` | Create an action item under a meeting or with none, for you, a named person, or nobody. |
-| `note1_update_action_item` | Edit text, description or owner, or mark open, completed or dismissed. |
-| `note1_list_topic_trackers` | Topic trackers you can see and where their phrases came up recently, with quotes. |
-| `note1_create_topic_tracker` | Create a tracker: a named set of phrases watched across meetings. Personal by default; team trackers take an admin. |
-| `note1_update_topic_tracker` | Rename a tracker or add and remove its phrases. |
-| `note1_delete_topic_tracker` | Delete a tracker. |
-| `note1_get_meeting_notes` | A meeting's personal notes and shared agenda, each block with a ref. |
-| `note1_update_meeting_notes` | Change the notes block by block, or replace them with markdown. Personal by default; the shared agenda needs edit access. |
-| `note1_get_calendar` | Calendar events with per-event recording status. |
-| `note1_get_scheduling_link` | Prefilled calendar link (Google Meet / Teams) with the note1 bot pre-invited — create the event in your own calendar with recording pre-wired. |
-| `note1_schedule_recording` | Send note1's recording bot to an existing calendar event or any meeting link at a given time. |
-| `note1_update_meeting` | Edit title, bot time/link, summary style, language, or video — optionally for a recurring series. |
-| `note1_cancel_recording` | Call off the bot for a meeting or its series. |
+| `transcribe` | Create a transcription from a YouTube URL (or other supported source) and wait up to `wait_seconds` (default 50, max 55). Returns the transcript if it is done, otherwise the job `id`, its `status`, and an instruction to call `get_transcription`. |
+| `get_transcription` | Status or result of a job, with optional waiting and paging (`from_seconds`, `max_chars`). Formats: `text` (default), `srt`, `vtt`, `json`. |
+| `list_transcriptions` | Recent transcription jobs, filterable by status and platform, paginated. Returns jobs without transcripts. |
+| `create_upload` | Reserve a chunked upload for a local audio or video file. Returns the transcription `id`, a chunk URL template, an upload token, the chunk list, and a dashboard upload link as a fallback. File bytes are sent over HTTP, outside MCP. |
+| `get_upload_status` | Which chunks of an upload were acknowledged, so an interrupted upload can resume. |
+| `complete_upload` | Verify an upload and queue it for transcription. |
+| `delete_transcription` | Cancel a running job or delete a finished one. Destructive. |
+| `get_account` | Minutes remaining, current plan, and renewal date. |
 
 ## Quick start
 
-You need a note1 account ([note1.ai](https://note1.ai)). For token-based setups, create a Personal Access Token under **Account → API tokens** (shown once — copy it).
+You need a transcript1 account ([transcript1.com](https://transcript1.com)). For key-based setups, create an API key under **Account → API keys** (shown once — copy it).
 
-### Claude (web) — OAuth, no token
+### Claude (web) — OAuth, no key
 
 1. [Claude Settings → Connectors](https://claude.ai/settings/connectors) → **Add custom connector**
-2. Name: `note1` — URL: `https://api.note1.ai/mcp` — leave the OAuth fields empty
-3. **Add**, then approve access on the note1 consent page
+2. Name: `transcript1` — URL: `https://api.transcript1.com/mcp` — leave the OAuth fields empty
+3. **Add**, then approve access on the transcript1 consent page
 
-### Claude Desktop — via `npx @note1ai/mcp`
+### Claude Desktop
+
+Through the `npx` package:
 
 ```json
 {
   "mcpServers": {
-    "note1": {
+    "transcript1": {
       "command": "npx",
-      "args": ["-y", "@note1ai/mcp"],
-      "env": { "NOTE1_API_TOKEN": "n1_YOURTOKEN" }
+      "args": ["-y", "@transcript1/mcp"],
+      "env": { "TRANSCRIPT1_API_KEY": "t1_YOURKEY" }
+    }
+  }
+}
+```
+
+Until the package is published, run it from a checkout instead:
+
+```json
+{
+  "mcpServers": {
+    "transcript1": {
+      "command": "node",
+      "args": ["/path/to/mcp/bin/transcript1-mcp.js"],
+      "env": { "TRANSCRIPT1_API_KEY": "t1_YOURKEY" }
     }
   }
 }
@@ -62,8 +66,7 @@ You need a note1 account ([note1.ai](https://note1.ai)). For token-based setups,
 ### Claude Code
 
 ```bash
-claude mcp add note1 --transport http https://api.note1.ai/mcp \
-  --header "Authorization: Bearer n1_YOURTOKEN"
+claude mcp add --transport http transcript1 https://api.transcript1.com/mcp --header "Authorization: Bearer t1_YOURKEY"
 ```
 
 ### Cursor
@@ -71,45 +74,30 @@ claude mcp add note1 --transport http https://api.note1.ai/mcp \
 ```json
 {
   "mcpServers": {
-    "note1": {
-      "url": "https://api.note1.ai/mcp",
-      "headers": { "Authorization": "Bearer n1_YOURTOKEN" }
+    "transcript1": {
+      "url": "https://api.transcript1.com/mcp",
+      "headers": { "Authorization": "Bearer t1_YOURKEY" }
     }
   }
 }
 ```
 
-### Slack (Slackbot)
+## Configuration
 
-Workspaces connected to note1 get zero-config access: open a DM with **Slackbot** → **Apps** → add **note1**. Slack identifies you by your workspace email.
-
-## Example prompts
-
-- *"What did we decide about pricing in last week's meetings?"*
-- *"Export the transcript of yesterday's standup as markdown"*
-- *"Which of my meetings tomorrow are being recorded?"*
-- *"Who spoke the most in yesterday's standup, and which questions went unanswered?"*
-- *"What are my open action items? Mark the deck one as done."*
-- *"Start tracking mentions of pricing across our meetings"*
-- *"Record my 3pm meeting: https://meet.google.com/abc-defg-hij"*
-- *"Summarize all my meetings with the design team this month"*
+| Variable | Required | Description |
+| --- | --- | --- |
+| `TRANSCRIPT1_API_KEY` | yes | Your transcript1 API key. Must start with `t1_`. |
+| `TRANSCRIPT1_MCP_URL` | no | Server URL. Defaults to `https://api.transcript1.com/mcp`. Must use `https`; plain `http` is accepted only for `localhost` and `127.0.0.1`, for local development. |
 
 ## How this package works
 
-The hosted MCP server lives at `https://api.note1.ai/mcp`. This package (`@note1ai/mcp`) is a thin stdio bridge for clients that launch MCP servers as commands: it wraps [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) with the note1 URL and your `NOTE1_API_TOKEN`. Clients with native remote support (claude.ai, Cursor) can connect to the URL directly and skip it.
+The hosted MCP server lives at `https://api.transcript1.com/mcp`. This package (`@transcript1/mcp`) is a thin stdio bridge for clients that launch MCP servers as commands: it wraps [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) with the server URL and your `TRANSCRIPT1_API_KEY`, sending the key as a bearer token. Arguments passed to the command are forwarded to `mcp-remote`. Clients with native remote support (claude.ai, Cursor) can connect to the URL directly and skip it.
 
 ## Security
 
-- Tokens are shown once at creation and stored only as SHA-256 hashes server-side. Revoke anytime under **Account → API tokens**.
-- OAuth connections appear under **Connected apps** with one-click revocation.
-- Write tools (schedule/update/cancel) are annotated so clients prompt for confirmation; read tools are marked read-only.
-- note1 holds no calendar write permissions — scheduling tools control note1's recording bot only and never create or modify calendar events.
-
-## Links
-
-- [note1](https://note1.ai) — product
-- [MCP server docs](https://note1.ai/docs/mcp-server) — full setup guide and troubleshooting
-- [Model Context Protocol](https://modelcontextprotocol.io) — the standard
+- API keys are shown once at creation and stored only as hashes server-side. Revoke them anytime under **Account → API keys**.
+- The bridge refuses plain-`http` server URLs except for `localhost` and `127.0.0.1`, so your key is not sent in the clear.
+- Read tools are marked read-only. `delete_transcription` is destructive, so clients should ask for confirmation before calling it.
 
 ## License
 
