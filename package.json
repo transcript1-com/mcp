@@ -1,0 +1,41 @@
+{
+  "name": "@note1ai/mcp",
+  "version": "1.2.0",
+  "description": "note1 MCP server connector \u2014 ask about your meetings, read speaker and question insights, manage action items and topic trackers, and schedule recordings from Claude, ChatGPT, Cursor, or any MCP client.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "note1",
+    "meetings",
+    "meeting-notes",
+    "transcription",
+    "ai-notetaker",
+    "claude",
+    "cursor"
+  ],
+  "homepage": "https://note1.ai/docs/mcp-server",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/note1-ai/note1-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/note1-ai/note1-mcp/issues"
+  },
+  "license": "MIT",
+  "author": "note1.ai",
+  "type": "commonjs",
+  "bin": {
+    "note1-mcp": "bin/note1-mcp.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "mcp-remote": "^0.1.0"
+  },
+  "mcpName": "ai.note1/mcp"
+}
