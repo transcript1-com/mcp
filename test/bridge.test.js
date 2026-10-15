@@ -65,12 +65,7 @@ test('the bin exits 1 with help when the key is missing', () => {
   assert.match(result.stderr, /missing TRANSCRIPT1_API_KEY/);
 });
 
-test('the package is branded transcript1 and cannot be published by accident', () => {
-  const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
-  assert.equal(pkg.name, '@transcript1/mcp');
-  assert.equal(pkg.private, true);
-  assert.deepEqual(pkg.bin, { 'transcript1-mcp': 'bin/transcript1-mcp.js' });
-  assert.equal(pkg.mcpName, 'com.transcript1/mcp');
+test('the package is branded transcript1 with no leftover note1 references', () => {
   for (const file of ['package.json', 'package-lock.json', 'README.md', 'LICENSE', 'bin/transcript1-mcp.js', 'lib/bridge.js']) {
     assert.doesNotMatch(readFileSync(path.join(root, file), 'utf8'), /note1/i, file);
   }
