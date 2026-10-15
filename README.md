@@ -97,7 +97,7 @@ See [transcript1.com/#pricing](https://transcript1.com/#pricing).
 
 ## Support
 
-support@one1.dev
+support@transcript1.com
 
 ## License
 

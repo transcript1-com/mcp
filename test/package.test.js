@@ -12,7 +12,7 @@ test('package.json is publishable', () => {
   assert.equal(pkg.version, '1.0.0');
   assert.equal(pkg.private, undefined);
   assert.deepEqual(pkg.publishConfig, { access: 'public' });
-  assert.deepEqual(pkg.bugs, { email: 'support@one1.dev' });
+  assert.deepEqual(pkg.bugs, { email: 'support@transcript1.com' });
   assert.equal(pkg.homepage, 'https://transcript1.com/docs/mcp');
   assert.equal(pkg.author, 'transcript1.com (one1.dev)');
   assert.equal(pkg.license, 'MIT');
@@ -46,7 +46,7 @@ test('readme documents setup, tools and support', () => {
     assert.ok(readme.includes(`\`${tool}\``), tool);
   }
 
-  for (const needle of ['npx', '-y', '@transcript1/mcp', 'TRANSCRIPT1_API_KEY', 'TRANSCRIPT1_MCP_URL', 'https://transcript1.com/dashboard/account/tokens', 'https://transcript1.com/#pricing', 'support@one1.dev']) {
+  for (const needle of ['npx', '-y', '@transcript1/mcp', 'TRANSCRIPT1_API_KEY', 'TRANSCRIPT1_MCP_URL', 'https://transcript1.com/dashboard/account/tokens', 'https://transcript1.com/#pricing', 'support@transcript1.com']) {
     assert.ok(readme.includes(needle), needle);
   }
 
