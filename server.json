@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.transcript1/mcp",
+  "title": "transcript1",
+  "description": "Transcribe audio and video from file uploads or YouTube links with transcript1.",
+  "websiteUrl": "https://transcript1.com/docs/mcp",
+  "repository": {
+    "url": "https://github.com/transcript1-com/mcp",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@transcript1/mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "TRANSCRIPT1_API_KEY",
+          "description": "Your transcript1 API key. Must start with t1_.",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.transcript1.com/mcp"
+    }
+  ]
+}
