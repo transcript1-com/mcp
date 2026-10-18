@@ -62,9 +62,8 @@ test('readme documents setup, tools and support', () => {
 
   assert.ok(!readme.includes('Until the package is published'));
 
-  for (const platform of ['YouTube', 'X', 'TikTok', 'Instagram', 'Facebook', 'Bluesky']) {
-    assert.ok(readme.includes(platform), platform);
-  }
+  assert.match(readme, /links from YouTube, X, TikTok, Instagram, Facebook and Bluesky in Claude/);
+  assert.match(readme, /from a YouTube, X, TikTok, Instagram, Facebook or Bluesky link and wait/);
 
   assert.ok(!readme.includes('from a YouTube URL'));
 });
