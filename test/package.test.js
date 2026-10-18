@@ -12,7 +12,8 @@ test('package.json is publishable', () => {
   assert.equal(pkg.version, '1.0.0');
   assert.equal(pkg.private, undefined);
   assert.deepEqual(pkg.publishConfig, { access: 'public' });
-  assert.deepEqual(pkg.bugs, { email: 'support@transcript1.com' });
+  assert.deepEqual(pkg.bugs, { email: 'support@transcript1.com', url: 'https://github.com/transcript1-com/mcp/issues' });
+  assert.deepEqual(pkg.repository, { type: 'git', url: 'git+https://github.com/transcript1-com/mcp.git' });
   assert.equal(pkg.homepage, 'https://transcript1.com/docs/mcp');
   assert.equal(pkg.author, 'transcript1.com (one1.dev)');
   assert.equal(pkg.license, 'MIT');

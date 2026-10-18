@@ -14,8 +14,13 @@
     "cursor"
   ],
   "homepage": "https://transcript1.com/docs/mcp",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transcript1-com/mcp.git"
+  },
   "bugs": {
-    "email": "support@transcript1.com"
+    "email": "support@transcript1.com",
+    "url": "https://github.com/transcript1-com/mcp/issues"
   },
   "license": "MIT",
   "author": "transcript1.com (one1.dev)",
