@@ -1,7 +1,7 @@
 {
   "name": "@transcript1/mcp",
-  "version": "1.0.0",
-  "description": "Transcribe audio and video from file uploads or YouTube links with transcript1 in Claude, ChatGPT, Cursor, or any MCP client.",
+  "version": "1.0.1",
+  "description": "Transcribe audio and video files or links from YouTube, X, TikTok, Instagram, Facebook and Bluesky with transcript1 in Claude, ChatGPT, Cursor, or any MCP client.",
   "keywords": [
     "mcp",
     "model-context-protocol",

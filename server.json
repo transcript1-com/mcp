@@ -2,18 +2,18 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.transcript1/mcp",
   "title": "transcript1",
-  "description": "Transcribe audio and video from file uploads or YouTube links with transcript1.",
+  "description": "Transcribe audio and video files or links from YouTube, X, TikTok, Instagram, Facebook and Bluesky.",
   "websiteUrl": "https://transcript1.com/docs/mcp",
   "repository": {
     "url": "https://github.com/transcript1-com/mcp",
     "source": "github"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@transcript1/mcp",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "transport": {
         "type": "stdio"
       },

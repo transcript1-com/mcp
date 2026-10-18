@@ -1,6 +1,6 @@
 # @transcript1/mcp
 
-MCP (Model Context Protocol) connector for [transcript1](https://transcript1.com), an audio and video transcription service. Transcribe file uploads or YouTube links in Claude, Cursor, VS Code, and other MCP clients, and read the transcript with timestamps and optional speaker labels.
+MCP (Model Context Protocol) connector for [transcript1](https://transcript1.com), an audio and video transcription service. Transcribe file uploads or links to YouTube, X, TikTok, Instagram, Facebook, and Bluesky posts in Claude, Cursor, VS Code, and other MCP clients, and read the transcript with timestamps and optional speaker labels.
 
 This package is a small stdio bridge to the hosted server at `https://api.transcript1.com/mcp`. It wraps [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) and signs in with your API key, for clients that launch MCP servers as commands. Docs: [transcript1.com/docs/mcp](https://transcript1.com/docs/mcp).
 
@@ -80,7 +80,7 @@ The key is passed to `mcp-remote` through its environment, not on the command li
 
 ## Tools
 
-- `transcribe`: create a transcription from a YouTube URL and wait briefly for the result.
+- `transcribe`: create a transcription from a YouTube, X, TikTok, Instagram, Facebook, or Bluesky link and wait briefly for the result.
 - `get_transcription`: status or transcript of a job, as text, SRT, VTT, or JSON, with paging for long transcripts.
 - `list_transcriptions`: your recent jobs, filterable and paginated.
 - `create_upload`: reserve a chunked upload for a local audio or video file.

@@ -9,7 +9,7 @@ const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
 
 test('package.json is publishable', () => {
   assert.equal(pkg.name, '@transcript1/mcp');
-  assert.equal(pkg.version, '1.0.0');
+  assert.equal(pkg.version, '1.0.1');
   assert.equal(pkg.private, undefined);
   assert.deepEqual(pkg.publishConfig, { access: 'public' });
   assert.deepEqual(pkg.bugs, { email: 'support@transcript1.com', url: 'https://github.com/transcript1-com/mcp/issues' });
@@ -22,6 +22,15 @@ test('package.json is publishable', () => {
   assert.deepEqual(pkg.files, ['bin', 'lib', 'README.md', 'LICENSE']);
   assert.equal(pkg.engines.node, '>=18');
   assert.equal(pkg.scripts.prepublishOnly, 'npm test');
+});
+
+test('server.json matches the package version and stays within registry limits', () => {
+  const server = JSON.parse(readFileSync(path.join(root, 'server.json'), 'utf8'));
+  assert.equal(server.version, '1.0.1');
+  assert.equal(server.packages[0].version, '1.0.1');
+  assert.ok(server.description.length <= 100, `description is ${server.description.length} chars`);
+  assert.ok(server.description.includes('TikTok'));
+  assert.ok(pkg.description.includes('TikTok'));
 });
 
 test('license names the copyright holder', () => {
@@ -52,4 +61,10 @@ test('readme documents setup, tools and support', () => {
   }
 
   assert.ok(!readme.includes('Until the package is published'));
+
+  for (const platform of ['YouTube', 'X', 'TikTok', 'Instagram', 'Facebook', 'Bluesky']) {
+    assert.ok(readme.includes(platform), platform);
+  }
+
+  assert.ok(!readme.includes('from a YouTube URL'));
 });
