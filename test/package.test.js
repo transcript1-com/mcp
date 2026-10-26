@@ -6,10 +6,11 @@ const path = require('node:path');
 
 const root = path.join(__dirname, '..');
 const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'));
+const platforms = ['YouTube', 'X', 'TikTok', 'Instagram', 'Facebook', 'Bluesky', 'Twitch', 'Dailymotion', 'Pinterest', 'LinkedIn', 'Snapchat Spotlight'];
 
 test('package.json is publishable', () => {
   assert.equal(pkg.name, '@transcript1/mcp');
-  assert.equal(pkg.version, '1.0.1');
+  assert.equal(pkg.version, '1.0.2');
   assert.equal(pkg.private, undefined);
   assert.deepEqual(pkg.publishConfig, { access: 'public' });
   assert.deepEqual(pkg.bugs, { email: 'support@transcript1.com', url: 'https://github.com/transcript1-com/mcp/issues' });
@@ -26,11 +27,17 @@ test('package.json is publishable', () => {
 
 test('server.json matches the package version and stays within registry limits', () => {
   const server = JSON.parse(readFileSync(path.join(root, 'server.json'), 'utf8'));
-  assert.equal(server.version, '1.0.1');
-  assert.equal(server.packages[0].version, '1.0.1');
+  assert.equal(server.version, '1.0.2');
+  assert.equal(server.packages[0].version, '1.0.2');
   assert.ok(server.description.length <= 100, `description is ${server.description.length} chars`);
   assert.ok(server.description.includes('TikTok'));
-  assert.ok(pkg.description.includes('TikTok'));
+  assert.ok(server.description.includes('7 more'));
+});
+
+test('package description names every supported platform', () => {
+  for (const platform of platforms) {
+    assert.ok(pkg.description.includes(platform), platform);
+  }
 });
 
 test('license names the copyright holder', () => {
@@ -56,14 +63,30 @@ test('readme documents setup, tools and support', () => {
     assert.ok(readme.includes(`\`${tool}\``), tool);
   }
 
-  for (const needle of ['npx', '-y', '@transcript1/mcp', 'TRANSCRIPT1_API_KEY', 'TRANSCRIPT1_MCP_URL', 'https://transcript1.com/dashboard/account/tokens', 'https://transcript1.com/#pricing', 'support@transcript1.com']) {
+  for (const needle of [
+    'npx',
+    '-y',
+    '@transcript1/mcp',
+    'TRANSCRIPT1_API_KEY',
+    'TRANSCRIPT1_MCP_URL',
+    'https://transcript1.com/dashboard/account/tokens',
+    'https://transcript1.com/#pricing',
+    'https://transcript1.com/docs/sources-and-options',
+    'support@transcript1.com',
+  ]) {
     assert.ok(readme.includes(needle), needle);
   }
 
   assert.ok(!readme.includes('Until the package is published'));
 
-  assert.match(readme, /links from YouTube, X, TikTok, Instagram, Facebook and Bluesky in Claude/);
-  assert.match(readme, /from a YouTube, X, TikTok, Instagram, Facebook or Bluesky link and wait/);
+  assert.match(readme, /links from YouTube, X, TikTok, Instagram, Facebook, Bluesky, Twitch, Dailymotion, Pinterest, LinkedIn and Snapchat Spotlight in Claude/);
+  assert.match(readme, /from a link on any supported platform and wait/);
 
   assert.ok(!readme.includes('from a YouTube URL'));
+});
+
+test('readme explains the hosted server for Claude and ChatGPT', () => {
+  const readme = readFileSync(path.join(root, 'README.md'), 'utf8');
+  assert.match(readme, /## Claude and ChatGPT/);
+  assert.match(readme, /custom connector with the URL `https:\/\/api\.transcript1\.com\/mcp`/);
 });
