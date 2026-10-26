@@ -85,6 +85,19 @@ test('readme documents setup, tools and support', () => {
   assert.ok(!readme.includes('from a YouTube URL'));
 });
 
+test('glama.json names the maintainers who can claim the Glama listing', () => {
+  const glama = JSON.parse(readFileSync(path.join(root, 'glama.json'), 'utf8'));
+  assert.deepEqual(glama, {
+    $schema: 'https://glama.ai/mcp/schemas/server.json',
+    maintainers: ['patrykcieszkowski'],
+  });
+});
+
+test('readme shows the Glama score badge', () => {
+  const readme = readFileSync(path.join(root, 'README.md'), 'utf8');
+  assert.ok(readme.includes('[![transcript1-com/mcp MCP server](https://glama.ai/mcp/servers/transcript1-com/mcp/badges/score.svg)](https://glama.ai/mcp/servers/transcript1-com/mcp)'));
+});
+
 test('readme explains the hosted server for Claude and ChatGPT', () => {
   const readme = readFileSync(path.join(root, 'README.md'), 'utf8');
   assert.match(readme, /## Claude and ChatGPT/);

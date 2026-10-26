@@ -1,5 +1,7 @@
 # @transcript1/mcp
 
+[![transcript1-com/mcp MCP server](https://glama.ai/mcp/servers/transcript1-com/mcp/badges/score.svg)](https://glama.ai/mcp/servers/transcript1-com/mcp)
+
 MCP (Model Context Protocol) connector for [transcript1](https://transcript1.com), an audio and video transcription service. Transcribe file uploads or links from YouTube, X, TikTok, Instagram, Facebook, Bluesky, Twitch, Dailymotion, Pinterest, LinkedIn and Snapchat Spotlight in Claude, Cursor, VS Code, and other MCP clients, and read the transcript with timestamps and optional speaker labels. Links must be public, recorded videos; [Sources and options](https://transcript1.com/docs/sources-and-options) lists the accepted link forms.
 
 This package is a small stdio bridge to the hosted server at `https://api.transcript1.com/mcp`. It wraps [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) and signs in with your API key, for clients that launch MCP servers as commands. Docs: [transcript1.com/docs/mcp](https://transcript1.com/docs/mcp).
