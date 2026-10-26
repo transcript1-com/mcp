@@ -31,7 +31,7 @@ test('server.json matches the package version and stays within registry limits',
   assert.equal(server.packages[0].version, '1.0.2');
   assert.ok(server.description.length <= 100, `description is ${server.description.length} chars`);
   assert.ok(server.description.includes('TikTok'));
-  assert.ok(server.description.includes('7 more'));
+  assert.ok(server.description.includes('7 more social media platforms'));
 });
 
 test('package description names every supported platform', () => {

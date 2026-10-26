@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.transcript1/mcp",
   "title": "transcript1",
-  "description": "Transcribe YouTube, TikTok, Instagram, X and 7 more video platforms, or audio/video files.",
+  "description": "Transcribe YouTube, TikTok, Instagram, X and 7 more social media platforms, or audio/video files.",
   "websiteUrl": "https://transcript1.com/docs/mcp",
   "repository": {
     "url": "https://github.com/transcript1-com/mcp",
