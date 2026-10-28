@@ -1,6 +1,6 @@
 # @transcript1/mcp
 
-[![transcript1-com/mcp MCP server](https://glama.ai/mcp/servers/transcript1-com/mcp/badges/score.svg)](https://glama.ai/mcp/servers/transcript1-com/mcp)
+[![transcript1-com/mcp MCP server](https://glama.ai/mcp/servers/transcript1-com/mcp/badges/score.svg)](https://glama.ai/mcp/servers/transcript1-com/mcp) [![MCP Badge](https://lobehub.com/badge/mcp/transcript1-com-mcp?style=flat)](https://lobehub.com/mcp/transcript1-com-mcp)
 
 MCP (Model Context Protocol) connector for [transcript1](https://transcript1.com), an audio and video transcription service. Transcribe file uploads or links from YouTube, X, TikTok, Instagram, Facebook, Bluesky, Twitch, Dailymotion, Pinterest, LinkedIn and Snapchat Spotlight in Claude, Cursor, VS Code, and other MCP clients, and read the transcript with timestamps and optional speaker labels. Links must be public, recorded videos; [Sources and options](https://transcript1.com/docs/sources-and-options) lists the accepted link forms.
 
