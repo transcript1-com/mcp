@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
-const { readFileSync } = require('node:fs');
+const { readFileSync, readdirSync } = require('node:fs');
 const path = require('node:path');
 
 const root = path.join(__dirname, '..');
@@ -96,6 +96,56 @@ test('glama.json names the maintainers who can claim the Glama listing', () => {
 test('readme shows the Glama score badge', () => {
   const readme = readFileSync(path.join(root, 'README.md'), 'utf8');
   assert.ok(readme.includes('[![transcript1-com/mcp MCP server](https://glama.ai/mcp/servers/transcript1-com/mcp/badges/score.svg)](https://glama.ai/mcp/servers/transcript1-com/mcp)'));
+});
+
+test('readme shows the LobeHub badge', () => {
+  const readme = readFileSync(path.join(root, 'README.md'), 'utf8');
+  assert.ok(readme.includes('[![MCP Badge](https://lobehub.com/badge/mcp/transcript1-com-mcp?style=flat)](https://lobehub.com/mcp/transcript1-com-mcp)'));
+});
+
+const skillNames = ['transcript1-subtitles', 'transcript1-summarize', 'transcript1-transcribe'];
+
+const readFrontmatter = file => {
+  const content = readFileSync(file, 'utf8');
+  const match = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(content);
+  assert.ok(match, `${file} starts with frontmatter`);
+  const fields = {};
+  for (const line of match[1].split('\n')) {
+    const separator = line.indexOf(': ');
+    fields[line.slice(0, separator)] = line.slice(separator + 2);
+  }
+
+  return { fields, body: match[2] };
+};
+
+test('skills folder holds the documented skills', () => {
+  const dirs = readdirSync(path.join(root, 'skills'), { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name)
+    .sort();
+  assert.deepEqual(dirs, skillNames);
+});
+
+test('every skill has Agent Skills frontmatter matching its folder', () => {
+  for (const name of skillNames) {
+    const { fields, body } = readFrontmatter(path.join(root, 'skills', name, 'SKILL.md'));
+    assert.deepEqual(Object.keys(fields).sort(), ['description', 'name'], name);
+    assert.equal(fields.name, name);
+    assert.match(fields.name, /^[a-z\d]+(?:-[a-z\d]+)*$/);
+    assert.ok(fields.description.length > 0 && fields.description.length <= 1024, `${name} description length`);
+    assert.ok(!fields.description.includes(': ') && !fields.description.includes(' #'), `${name} description is a plain YAML scalar`);
+    assert.ok(body.trim().length > 0, `${name} has instructions`);
+  }
+});
+
+test('readme lists example prompts and every skill', () => {
+  const readme = readFileSync(path.join(root, 'README.md'), 'utf8');
+  assert.match(readme, /## Example prompts/);
+  assert.match(readme, /## Agent Skills/);
+  assert.ok(readme.includes('npx skills add transcript1-com/mcp'));
+  for (const name of skillNames) {
+    assert.ok(readme.includes(`\`${name}\``), name);
+  }
 });
 
 test('readme explains the hosted server for Claude and ChatGPT', () => {

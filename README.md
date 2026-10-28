@@ -97,6 +97,36 @@ The key is passed to `mcp-remote` through its environment, not on the command li
 
 All tools act on your own account only.
 
+## Example prompts
+
+Once the server is connected, ask in plain language:
+
+- "Summarize this YouTube video with timestamps: https://www.youtube.com/watch?v=VIDEO_ID"
+- "Transcribe this podcast episode with speaker labels: LINK"
+- "Make SRT subtitles for this TikTok and save them as `subs.srt`: LINK"
+- "Transcribe `~/Downloads/interview.m4a`" (local files need a client that can run shell commands, such as Claude Code or Cursor)
+- "Give me the five best quotes from this interview, with timestamps: LINK"
+- "Write meeting notes with decisions and action items from `team-call.mp4`"
+- "How many transcription minutes do I have left?"
+
+## Agent Skills
+
+The [`skills`](skills) folder has [Agent Skills](https://agentskills.io) that teach an agent how to use these tools well: waiting for results, reading long transcripts page by page, uploading files in chunks, and writing from the full transcript. They work with the MCP server; they do not replace it.
+
+| Skill | Use it for |
+| --- | --- |
+| [`transcript1-transcribe`](skills/transcript1-transcribe/SKILL.md) | Transcripts of links and local files, with speaker labels and chunked uploads |
+| [`transcript1-summarize`](skills/transcript1-summarize/SKILL.md) | Summaries, key points, chapters, quotes and meeting notes with timestamps |
+| [`transcript1-subtitles`](skills/transcript1-subtitles/SKILL.md) | SRT and WebVTT subtitle files |
+
+Install them with the [skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add transcript1-com/mcp
+```
+
+Or copy a skill folder into `~/.claude/skills/` (Claude Code, every project) or `.claude/skills/` (one project). In the Claude apps, upload the skill folder as a ZIP file in the Skills settings.
+
 ## Pricing
 
 See [transcript1.com/#pricing](https://transcript1.com/#pricing).
