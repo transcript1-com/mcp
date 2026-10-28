@@ -8,20 +8,20 @@
     "url": "https://github.com/transcript1-com/mcp",
     "source": "github"
   },
-  "version": "1.0.2",
+  "version": "1.0.3",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@transcript1/mcp",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "transport": {
         "type": "stdio"
       },
       "environmentVariables": [
         {
           "name": "TRANSCRIPT1_API_KEY",
-          "description": "Your transcript1 API key. Must start with t1_.",
-          "isRequired": true,
+          "description": "Optional transcript1 API key (t1_...). Without it, you sign in through your browser.",
+          "isRequired": false,
           "isSecret": true,
           "format": "string"
         }

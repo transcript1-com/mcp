@@ -4,17 +4,21 @@
 
 MCP (Model Context Protocol) connector for [transcript1](https://transcript1.com), an audio and video transcription service. Transcribe file uploads or links from YouTube, X, TikTok, Instagram, Facebook, Bluesky, Twitch, Dailymotion, Pinterest, LinkedIn and Snapchat Spotlight in Claude, Cursor, VS Code, and other MCP clients, and read the transcript with timestamps and optional speaker labels. Links must be public, recorded videos; [Sources and options](https://transcript1.com/docs/sources-and-options) lists the accepted link forms.
 
-This package is a small stdio bridge to the hosted server at `https://api.transcript1.com/mcp`. It wraps [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) and signs in with your API key, for clients that launch MCP servers as commands. Docs: [transcript1.com/docs/mcp](https://transcript1.com/docs/mcp).
+This package is a small stdio bridge to the hosted server at `https://api.transcript1.com/mcp`, for clients that launch MCP servers as commands. It wraps [`mcp-remote`](https://www.npmjs.com/package/mcp-remote): the first time it starts, it opens transcript1 in your browser so you can sign in, or it uses an API key if you set one. Docs: [transcript1.com/docs/mcp](https://transcript1.com/docs/mcp).
 
-## Claude and ChatGPT
+## Connect without this package
 
-Claude and ChatGPT can connect to the hosted server directly, without this package. Add a custom connector with the URL `https://api.transcript1.com/mcp`, then sign in to transcript1 and approve access. Custom connectors depend on your plan; see [transcript1.com/docs/mcp](https://transcript1.com/docs/mcp).
+Clients that support remote MCP servers can connect to `https://api.transcript1.com/mcp` directly and sign in to transcript1 in the browser. You need neither this package nor an API key.
+
+- **Claude and ChatGPT:** add a custom connector with the URL `https://api.transcript1.com/mcp`, then sign in to transcript1 and approve access. Custom connectors depend on your plan.
+- **Claude Code:** run `claude mcp add --transport http transcript1 https://api.transcript1.com/mcp`, then run `/mcp` and sign in.
+- **Cursor and VS Code:** add the URL as a remote MCP server and sign in when asked. [transcript1.com/docs/mcp](https://transcript1.com/docs/mcp) has one-click installs.
 
 ## Setup
 
-You need a transcript1 account and an API key (starts with `t1_`). Create one at [transcript1.com/dashboard/account/tokens](https://transcript1.com/dashboard/account/tokens). It is shown once, so copy it.
+You need a transcript1 account. Every client below runs the same command, `npx -y @transcript1/mcp`. Requires Node.js 18 or newer.
 
-Every client below runs the same command, `npx -y @transcript1/mcp`, with `TRANSCRIPT1_API_KEY` set. Requires Node.js 18 or newer.
+The first time the server starts, the package opens transcript1 in your browser. Sign in and approve access. The sign-in is saved in `~/.mcp-auth` on your computer, so you do not repeat it every time.
 
 ### Claude Desktop
 
@@ -25,8 +29,7 @@ Add to `claude_desktop_config.json`:
   "mcpServers": {
     "transcript1": {
       "command": "npx",
-      "args": ["-y", "@transcript1/mcp"],
-      "env": { "TRANSCRIPT1_API_KEY": "t1_YOURKEY" }
+      "args": ["-y", "@transcript1/mcp"]
     }
   }
 }
@@ -34,15 +37,14 @@ Add to `claude_desktop_config.json`:
 
 ### Cursor
 
-Add to `~/.cursor/mcp.json` (or `.cursor/mcp.json` in a project):
+Add to `~/.cursor/mcp.json` (or `.cursor/mcp.json` in a project). Cursor can also connect directly; use this package if Cursor's own sign-in fails.
 
 ```json
 {
   "mcpServers": {
     "transcript1": {
       "command": "npx",
-      "args": ["-y", "@transcript1/mcp"],
-      "env": { "TRANSCRIPT1_API_KEY": "t1_YOURKEY" }
+      "args": ["-y", "@transcript1/mcp"]
     }
   }
 }
@@ -58,8 +60,7 @@ Add to `.vscode/mcp.json`:
     "transcript1": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@transcript1/mcp"],
-      "env": { "TRANSCRIPT1_API_KEY": "t1_YOURKEY" }
+      "args": ["-y", "@transcript1/mcp"]
     }
   }
 }
@@ -68,18 +69,40 @@ Add to `.vscode/mcp.json`:
 ### Claude Code
 
 ```bash
-claude mcp add transcript1 --env TRANSCRIPT1_API_KEY=t1_YOURKEY -- npx -y @transcript1/mcp
+claude mcp add transcript1 -- npx -y @transcript1/mcp
 ```
 
 ### Any other MCP client
 
-Configure a stdio server with command `npx`, arguments `-y @transcript1/mcp`, and the environment variable `TRANSCRIPT1_API_KEY`.
+Configure a stdio server with command `npx` and arguments `-y @transcript1/mcp`.
+
+### Use an API key instead
+
+Browser sign-in needs a browser on the same computer as the MCP client. Over SSH, in CI or in a container, or to skip the sign-in, set `TRANSCRIPT1_API_KEY` to an API key (starts with `t1_`). Create one at [transcript1.com/dashboard/account/tokens](https://transcript1.com/dashboard/account/tokens). It is shown once, so copy it.
+
+```json
+{
+  "mcpServers": {
+    "transcript1": {
+      "command": "npx",
+      "args": ["-y", "@transcript1/mcp"],
+      "env": { "TRANSCRIPT1_API_KEY": "t1_YOURKEY" }
+    }
+  }
+}
+```
+
+With Claude Code:
+
+```bash
+claude mcp add transcript1 --env TRANSCRIPT1_API_KEY=t1_YOURKEY -- npx -y @transcript1/mcp
+```
 
 ## Configuration
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `TRANSCRIPT1_API_KEY` | yes | Your transcript1 API key. Must start with `t1_`. |
+| `TRANSCRIPT1_API_KEY` | no | Your transcript1 API key. Must start with `t1_`. Without it, the package signs in through your browser. |
 | `TRANSCRIPT1_MCP_URL` | no | Server URL. Defaults to `https://api.transcript1.com/mcp`. Must use `https`; plain `http` is accepted only for `localhost` and `127.0.0.1`. |
 
 The key is passed to `mcp-remote` through its environment, not on the command line. Extra arguments given to the command are forwarded to `mcp-remote`.

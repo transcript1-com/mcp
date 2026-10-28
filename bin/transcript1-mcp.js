@@ -5,7 +5,9 @@
 
 const { spawn } = require('node:child_process');
 const path = require('node:path');
-const { buildArgs, buildEnv, resolveConfig } = require('../lib/bridge.js');
+const {
+  browserSignInMessage, buildArgs, buildEnv, resolveConfig,
+} = require('../lib/bridge.js');
 
 const getBinEntry = pkg => {
   if (typeof pkg.bin === 'string') {
@@ -21,13 +23,20 @@ if ('error' in config) {
   process.exit(1);
 }
 
+const useKey = 'token' in config;
+if (!useKey) {
+  console.error(browserSignInMessage());
+}
+
 const mcpRemotePkg = require('mcp-remote/package.json');
 const binEntry = getBinEntry(mcpRemotePkg);
 const mcpRemoteBin = path.join(path.dirname(require.resolve('mcp-remote/package.json')), binEntry);
 
 const child = spawn(
   process.execPath,
-  buildArgs({ mcpRemoteBin, url: config.url, extraArgs: process.argv.slice(2) }),
+  buildArgs({
+    mcpRemoteBin, url: config.url, useKey, extraArgs: process.argv.slice(2),
+  }),
   { stdio: 'inherit', env: buildEnv(process.env, config.token) },
 );
 

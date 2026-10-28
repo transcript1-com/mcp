@@ -10,7 +10,7 @@ const platforms = ['YouTube', 'X', 'TikTok', 'Instagram', 'Facebook', 'Bluesky',
 
 test('package.json is publishable', () => {
   assert.equal(pkg.name, '@transcript1/mcp');
-  assert.equal(pkg.version, '1.0.2');
+  assert.equal(pkg.version, '1.0.3');
   assert.equal(pkg.private, undefined);
   assert.deepEqual(pkg.publishConfig, { access: 'public' });
   assert.deepEqual(pkg.bugs, { email: 'support@transcript1.com', url: 'https://github.com/transcript1-com/mcp/issues' });
@@ -27,11 +27,26 @@ test('package.json is publishable', () => {
 
 test('server.json matches the package version and stays within registry limits', () => {
   const server = JSON.parse(readFileSync(path.join(root, 'server.json'), 'utf8'));
-  assert.equal(server.version, '1.0.2');
-  assert.equal(server.packages[0].version, '1.0.2');
+  assert.equal(server.version, '1.0.3');
+  assert.equal(server.packages[0].version, '1.0.3');
   assert.ok(server.description.length <= 100, `description is ${server.description.length} chars`);
   assert.ok(server.description.includes('TikTok'));
   assert.ok(server.description.includes('7 more social media platforms'));
+});
+
+test('server.json lists the API key as optional', () => {
+  const server = JSON.parse(readFileSync(path.join(root, 'server.json'), 'utf8'));
+  const [key] = server.packages[0].environmentVariables;
+  assert.equal(key.name, 'TRANSCRIPT1_API_KEY');
+  assert.equal(key.isRequired, false);
+  assert.equal(key.isSecret, true);
+  assert.match(key.description, /browser/);
+});
+
+test('package-lock.json matches the package version', () => {
+  const lock = JSON.parse(readFileSync(path.join(root, 'package-lock.json'), 'utf8'));
+  assert.equal(lock.version, pkg.version);
+  assert.equal(lock.packages[''].version, pkg.version);
 });
 
 test('package description names every supported platform', () => {
@@ -150,6 +165,16 @@ test('readme lists example prompts and every skill', () => {
 
 test('readme explains the hosted server for Claude and ChatGPT', () => {
   const readme = readFileSync(path.join(root, 'README.md'), 'utf8');
-  assert.match(readme, /## Claude and ChatGPT/);
+  assert.match(readme, /## Connect without this package/);
   assert.match(readme, /custom connector with the URL `https:\/\/api\.transcript1\.com\/mcp`/);
+  assert.ok(readme.includes('claude mcp add --transport http transcript1 https://api.transcript1.com/mcp`'));
+});
+
+test('readme makes the API key optional', () => {
+  const readme = readFileSync(path.join(root, 'README.md'), 'utf8');
+  assert.match(readme, /opens transcript1 in your browser/);
+  assert.match(readme, /### Use an API key instead/);
+  assert.match(readme, /\| `TRANSCRIPT1_API_KEY` \| no \|/);
+  assert.ok(!readme.includes('Bearer t1_'));
+  assert.ok(!readme.includes('You need a transcript1 account and an API key'));
 });

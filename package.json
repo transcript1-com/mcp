@@ -1,6 +1,6 @@
 {
   "name": "@transcript1/mcp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Transcribe videos from YouTube, X, TikTok, Instagram, Facebook, Bluesky, Twitch, Dailymotion, Pinterest, LinkedIn and Snapchat Spotlight, plus audio/video files, with transcript1 in Claude, ChatGPT, Cursor or any MCP client.",
   "keywords": [
     "mcp",
