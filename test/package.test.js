@@ -10,7 +10,7 @@ const platforms = ['YouTube', 'X', 'TikTok', 'Instagram', 'Facebook', 'Bluesky',
 
 test('package.json is publishable', () => {
   assert.equal(pkg.name, '@transcript1/mcp');
-  assert.equal(pkg.version, '1.0.3');
+  assert.equal(pkg.version, '1.0.4');
   assert.equal(pkg.private, undefined);
   assert.deepEqual(pkg.publishConfig, { access: 'public' });
   assert.deepEqual(pkg.bugs, { email: 'support@transcript1.com', url: 'https://github.com/transcript1-com/mcp/issues' });
@@ -27,8 +27,8 @@ test('package.json is publishable', () => {
 
 test('server.json matches the package version and stays within registry limits', () => {
   const server = JSON.parse(readFileSync(path.join(root, 'server.json'), 'utf8'));
-  assert.equal(server.version, '1.0.3');
-  assert.equal(server.packages[0].version, '1.0.3');
+  assert.equal(server.version, '1.0.4');
+  assert.equal(server.packages[0].version, '1.0.4');
   assert.ok(server.description.length <= 100, `description is ${server.description.length} chars`);
   assert.ok(server.description.includes('TikTok'));
   assert.ok(server.description.includes('7 more social media platforms'));

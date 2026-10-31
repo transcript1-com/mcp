@@ -25,6 +25,6 @@ Check that the last cue number (SRT) or the cue count matches the total in the l
 
 ## Notes
 
-- transcript1 transcribes the spoken language; it does not translate. For subtitles in another language, translate only the cue text and keep the numbers and timestamps unchanged.
+- For subtitles in another language, pass `translate_to` (ISO 639-1) to `transcribe`, or call `translate_transcription` with `id` and `language` on a finished job (free, idempotent). Then call `get_transcription` with format `srt` or `vtt` and `translation=only` for translated subtitles, or `translation=both` for bilingual ones. Translation is text only, segment-aligned, with timestamps kept; one target language per request.
 - Captions from the platform (`transcript_source` other than `speech_to_text`) keep the platform's timing. Use `source: "stt"` when the user wants fresh AI timing or the captions are poor.
 - Do not reflow or merge cues unless asked; editors and players expect the timing as given.
