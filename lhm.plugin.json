@@ -2,7 +2,298 @@
   "identifier": "transcript1-com-mcp",
   "name": "transcript1",
   "version": "1.0.5",
-  "description": "Transcribe YouTube, TikTok, Instagram, X and 7 more social media platforms, or audio/video files. Optional API key; otherwise browser sign-in.",
+  "description": "Transcribe YouTube, TikTok, Instagram, X and 7 more social media platforms, or audio/video files, with timestamps, speakers and free translation. Optional API key; without one, sign in through your browser.",
+  "author": "transcript1",
+  "authorUrl": "https://github.com/transcript1-com",
   "homepage": "https://transcript1.com/docs/mcp",
-  "cloudEndpoint": "https://api.transcript1.com/mcp"
+  "cloudEndpoint": "https://api.transcript1.com/mcp",
+  "category": "media-generate",
+  "tags": [
+    "transcription",
+    "youtube",
+    "subtitles",
+    "speech-to-text",
+    "translation"
+  ],
+  "tools": [
+    {
+      "name": "transcribe",
+      "title": "Transcribe a video",
+      "description": "Transcribe a YouTube, X, TikTok, Instagram, Facebook, Bluesky, Twitch, Dailymotion, Pinterest, LinkedIn, Snapchat link. Social posts must be public; only the first video is used. New platforms support public recorded native media without supplied account cookies, not live streams or external embeds. With source \"auto\", uses native captions when available, otherwise speech-to-text. Captions are available on YouTube, X, TikTok, Bluesky, Dailymotion and LinkedIn when a usable native track exists. Dailymotion supports direct SRT, not caption playlists; Bluesky captions require a supported trusted PDS; LinkedIn supports public native posts, not Learning. Other platforms use speech-to-text. Caption kind is null when authorship is unknown. Waits up to wait_seconds (default 50, max 55) and returns the first transcript page, or an id for get_transcription. Costs 1 minute per started media minute on every platform. If a call fails or times out, find its id with list_transcriptions and call get_transcription instead of transcribe. The same video and options within 24 hours reuse the earlier transcription without another charge; short links may not be matched.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "description": "Optional; detected from the link. If supplied, must match: \"youtube\", \"x\", \"tiktok\", \"instagram\", \"facebook\", \"bluesky\", \"twitch\", \"dailymotion\", \"pinterest\", \"linkedin\", \"snapchat\""
+          },
+          "url": {
+            "type": "string",
+            "description": "YouTube, X, TikTok, Instagram, Facebook, Bluesky, Twitch, Dailymotion, Pinterest, LinkedIn, Snapchat video link; only the first video in a post is used"
+          },
+          "source": {
+            "type": "string",
+            "description": "\"auto\" (default): native captions if available, else speech-to-text; \"captions\": captions only, no STT fallback; \"stt\": always speech-to-text. Captions are available on YouTube, X, TikTok, Bluesky, Dailymotion and LinkedIn when a usable native track exists. Dailymotion supports direct SRT, not caption playlists; Bluesky captions require a supported trusted PDS; LinkedIn supports public native posts, not Learning. Other platforms use speech-to-text. Caption kind is null when authorship is unknown."
+          },
+          "language": {
+            "type": "string",
+            "description": "\"auto\" (default) or a two-letter ISO 639-1 code"
+          },
+          "diarize": {
+            "type": "boolean",
+            "description": "Identify speakers (uses speech-to-text). Default false"
+          },
+          "translate_to": {
+            "type": "string",
+            "description": "Two-letter ISO 639-1 code. Translates the transcript once it is ready; free. Read it with get_transcription"
+          },
+          "format": {
+            "type": "string",
+            "description": "\"text\" (default: timestamps and speakers), \"srt\", \"vtt\" or \"json\""
+          },
+          "wait_seconds": {
+            "type": "number",
+            "description": "Seconds to wait for the result, 0 to 55. Default 50"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_transcription",
+      "title": "Get a transcription",
+      "description": "Get a transcription's status or its transcript. Waits up to wait_seconds (default 50, max 55) for it to finish. Long transcripts are paged: up to max_chars characters (default 60000) per call; pass the returned next_from_seconds as from_seconds to get the next page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Transcription id (tr_…)"
+          },
+          "wait_seconds": {
+            "type": "number",
+            "description": "Seconds to wait for the result, 0 to 55. Default 50"
+          },
+          "format": {
+            "type": "string",
+            "description": "\"text\" (default: timestamps and speakers), \"srt\", \"vtt\" or \"json\""
+          },
+          "from_seconds": {
+            "type": "number",
+            "description": "Return segments starting at or after this second. Default 0"
+          },
+          "max_chars": {
+            "type": "number",
+            "description": "Maximum characters of transcript per page, 1000 to 100000. Default 60000"
+          },
+          "translation": {
+            "type": "string",
+            "description": "With a completed translation: \"both\" (default; translated line under each original), \"only\" or \"none\""
+          },
+          "translation_language": {
+            "type": "string",
+            "description": "Two-letter code of the translation to read, e.g. \"de\". Default: the requested translate_to language, else the latest translation"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_transcriptions",
+      "title": "List transcriptions",
+      "description": "List recent transcriptions, newest first, without transcripts. Filter by status or platform; pass next_cursor as cursor for more.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Only transcriptions with this status: awaiting_upload, queued, fetching, transcribing, completed, failed or canceled"
+          },
+          "platform": {
+            "type": "string",
+            "description": "Only transcriptions from this platform: \"youtube\", \"x\", \"tiktok\", \"instagram\", \"facebook\", \"bluesky\", \"twitch\", \"dailymotion\", \"pinterest\", \"linkedin\", \"snapchat\" or \"upload\""
+          },
+          "limit": {
+            "type": "number",
+            "description": "1 to 100, default 20"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "The next_cursor from the previous page"
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_upload",
+      "title": "Reserve a file upload",
+      "description": "Reserve a chunked upload for a local audio or video file (mp3, wav, m4a, flac, ogg, opus, mp4, mov, webm, mkv; up to 2 GB). Returns the transcription id, a chunk URL template, an X-Upload-Token and the chunk list. Send the bytes with HTTP PUT outside MCP, then call complete_upload. request_id is a UUID you generate; reuse it to retry safely.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "description": "File name with its extension, e.g. interview.m4a"
+          },
+          "size": {
+            "type": "number",
+            "description": "File size in bytes"
+          },
+          "mime_type": {
+            "type": "string",
+            "description": "MIME type, e.g. audio/mp4"
+          },
+          "language": {
+            "type": "string",
+            "description": "\"auto\" (default) or a two-letter ISO 639-1 code"
+          },
+          "diarize": {
+            "type": "boolean",
+            "description": "Identify speakers. Default false"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "A UUID you generate for this upload; reusing it returns the same upload with a fresh token"
+          }
+        },
+        "required": [
+          "filename",
+          "size",
+          "request_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_upload_status",
+      "title": "Get upload status",
+      "description": "Show which chunks of an upload were received, to resume an interrupted upload.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Transcription id (tr_…) from create_upload"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "complete_upload",
+      "title": "Complete an upload",
+      "description": "Verify that every chunk arrived and queue the transcription. Then call get_transcription to wait for the transcript.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Transcription id (tr_…) from create_upload"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "delete_transcription",
+      "title": "Cancel or delete a transcription",
+      "description": "Cancel a transcription that is still running (minutes taken for it are refunded), or permanently delete a finished one and its transcript.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Transcription id (tr_…)"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_account",
+      "title": "Get account",
+      "description": "Show minutes remaining, plan and renewal date.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "translate_transcription",
+      "title": "Translate a transcription",
+      "description": "Translate a completed transcription into another language. Free. Starts in the background and returns the status; call get_transcription to read the result, which shows the translation under each original line.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Transcription id (tr_…)"
+          },
+          "language": {
+            "type": "string",
+            "description": "Two-letter ISO 639-1 code, for example \"en\""
+          }
+        },
+        "required": [
+          "id",
+          "language"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
 }
