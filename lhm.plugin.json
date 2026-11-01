@@ -115,7 +115,7 @@
     {
       "name": "list_transcriptions",
       "title": "List transcriptions",
-      "description": "List recent transcriptions, newest first, without transcripts. Filter by status or platform; pass next_cursor as cursor for more.",
+      "description": "List recent transcriptions, newest first, without transcripts. Use it to find an id you lost (for example after transcribe timed out) or to see whether a video was already transcribed; use get_transcription to read one job's transcript. Filter by status or platform; pass next_cursor as cursor for more.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -190,7 +190,7 @@
     {
       "name": "get_upload_status",
       "title": "Get upload status",
-      "description": "Show which chunks of an upload were received, to resume an interrupted upload.",
+      "description": "Show which chunks of an upload were received. Use it only to resume an interrupted upload or after complete_upload reports upload_incomplete: re-send the missing chunks, then call complete_upload. For transcription progress after the upload, use get_transcription.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -211,7 +211,7 @@
     {
       "name": "complete_upload",
       "title": "Complete an upload",
-      "description": "Verify that every chunk arrived and queue the transcription. Then call get_transcription to wait for the transcript.",
+      "description": "Verify that every chunk arrived and queue the transcription. Call it once, after sending every chunk from create_upload. If it fails with upload_incomplete, call get_upload_status, re-send the missing chunks and call it again. Then call get_transcription to wait for the transcript.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -234,7 +234,7 @@
     {
       "name": "delete_transcription",
       "title": "Cancel or delete a transcription",
-      "description": "Cancel a transcription that is still running (minutes taken for it are refunded), or permanently delete a finished one and its transcript.",
+      "description": "Cancel a transcription that is still running (minutes taken for it are refunded), or permanently delete a finished one and its transcript and translations. Use it only when the user asks to cancel or delete; it cannot be undone. To stop waiting without canceling, just stop calling get_transcription.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -257,7 +257,7 @@
     {
       "name": "get_account",
       "title": "Get account",
-      "description": "Show minutes remaining, plan and renewal date.",
+      "description": "Show the minutes remaining, the plan and when minutes renew. Call it before starting long or many transcriptions (each started media minute costs 1 minute; translation is free), or after transcribe or complete_upload fails with insufficient_minutes, to tell the user how many remain and when they reset. It does not list or change transcriptions: use list_transcriptions for job history and get_transcription for one job's status or cost.",
       "inputSchema": {
         "type": "object",
         "properties": {}
