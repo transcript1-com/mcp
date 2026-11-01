@@ -110,7 +110,7 @@ The key is passed to `mcp-remote` through its environment, not on the command li
 ## Tools
 
 - `transcribe`: create a transcription from a link on any supported platform and wait briefly for the result. Optional `translate_to` (ISO 639-1) also translates the finished transcript.
-- `get_transcription`: status or transcript of a job, as text, SRT, VTT, or JSON, with paging for long transcripts. `translation` is `both` (default, translated line under each original), `only`, or `none`.
+- `get_transcription`: status or transcript of a job, as text, SRT, VTT, or JSON, with paging for long transcripts. `translation` is `both` (default, translated line under each original), `only`, or `none`. `translation_language` (ISO 639-1) picks which translation to show when a transcript has several; by default the most recent one.
 - `translate_transcription`: translate an already finished transcript into one language; free (0 minutes) and idempotent. Text only, timestamps kept.
 - `list_transcriptions`: your recent jobs, filterable and paginated.
 - `create_upload`: reserve a chunked upload for a local audio or video file.
