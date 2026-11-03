@@ -117,7 +117,8 @@ The key is passed to `mcp-remote` through its environment, not on the command li
 - `get_upload_status`: see which chunks were received, to resume an interrupted upload.
 - `complete_upload`: verify an upload and queue it for transcription.
 - `delete_transcription`: cancel a running job or delete a finished one.
-- `get_account`: minutes remaining, current plan, and renewal date.
+- `get_account`: minutes remaining, current plan, renewal date, top-up pack price, and auto top-up status.
+- `top_up`: buy 1,000-minute top-up packs with your card on file, only when you ask. It charges right away only if this connection or API key has **Can buy top-ups** turned on in the dashboard (off by default) and the monthly agent limit has room; otherwise it returns a link where you can pay. Pass `request_id` so a retried purchase is charged once.
 
 All tools act on your own account only.
 
@@ -133,6 +134,7 @@ Once the server is connected, ask in plain language:
 - "Give me the five best quotes from this interview, with timestamps: LINK"
 - "Write meeting notes with decisions and action items from `team-call.mp4`"
 - "How many transcription minutes do I have left?"
+- "Buy one more pack of minutes"
 
 ## Agent Skills
 
